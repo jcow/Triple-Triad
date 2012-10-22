@@ -1,0 +1,738 @@
+<!DOCTYPE>
+
+
+<html>
+
+
+<head>
+
+	<title>Triple Triad</title>
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/themes/base/jquery-ui.css" type="text/css" media="all" />
+
+
+
+<style type="text/css">
+
+	/*Main Col CSS*/
+	
+	.main_container{
+		width: 720px;
+		margin-left: auto;
+		margin-right: auto;
+		margin-top: 20px;
+	}
+	
+	.col{
+		float: left;
+		border: 1px solid black;
+		min-height: 200px;
+	}
+
+	.col1, .col3{
+		height: 755px;
+		width: 140px;
+	}
+
+	.col2{
+		margin-top: 100px;
+		width: 420px;
+	}
+
+
+	/*Card CSS*/
+	.card{
+		 height: 127px;
+	}
+	
+	.playerCard{
+		background-color: #D14D4D;
+	}
+	
+	.computerCard{
+		background-color: #4D75D1;
+	}
+	
+	#player_card_queue .card, #computer_card_queue .card{
+		 margin: 20px;
+	}
+	
+	
+	/*Gameboard css*/
+	.gameboard_container{
+		width: 100px;
+		margin: 0 20px 20px 20px;
+		background-color: orange;
+		height: 127px;
+		float: left;
+	}
+	
+	.gameboard_container_top{
+		margin-top: 20px;
+	}	
+	
+	/*Dialog CSS*/
+	
+	#player_chooser_dialog{
+		text-align:center;
+	}
+	
+	.ui-dialog-titlebar-close {
+	  visibility: hidden;
+	}
+	
+	#player_chooser_number{
+		margin-top: 20px;
+	}
+	
+	#start_game{
+		margin-top: 10px;
+	}
+	
+	/*Score*/
+	.score{
+		width: 400px;
+		margin: 10 auto;
+		text-align: center;
+	}
+	
+	/*Winner Container*/
+	#winner_container{
+		text-align:center;
+	}
+	
+	#winner_container div{
+		margin-bottom: 20px;
+	}
+	
+</style>
+
+</head>
+
+<body>
+
+
+<div id="player_chooser_dialog" title="Choose Even Or Odd" style="display:none;">
+		<button id="player_even_button" class="even_odd_button">Even</button>
+		<button id="player_odd_button" class="even_odd_button">Odd</button>
+		<div id="player_chooser_number">
+			<button id="start_game" style="display:none">Start Game</div>
+		</div>
+</div>
+
+<div id="winner_container" style="display:none;">
+	<div>
+		<button id="retry_button">Play Again?</button>
+	</div>
+</div>
+
+<div class="score">
+	Player <span id="player_score">0</span>
+	Computer <span id="computer_score">0</span>
+</div>
+<div class="main_container">
+	<div id="player_card_queue" class="col col1">
+
+	</div>
+	<div class="col col2">
+		<div>
+			<div id="0-0" class="gameboard_container gameboard_container_top">
+			
+			</div>
+			<div id="0-1" class="gameboard_container gameboard_container_top">
+			
+			</div>
+			<div id="0-2" class="gameboard_container gameboard_container_top">
+			
+			</div>
+		</div>
+			
+		<div>
+			<div id="1-0" class="gameboard_container">
+			
+			</div>
+			<div id="1-1" class="gameboard_container">
+			
+			</div>
+			<div id="1-2" class="gameboard_container">
+		
+			</div>
+		</div>
+		<div>
+			<div id="2-0" class="gameboard_container">
+			
+			</div>
+			<div id="2-1" class="gameboard_container">
+			
+			</div>
+			<div id="2-2" class="gameboard_container">
+		
+			</div>
+		</div>
+		
+		
+	</div>
+
+	<div id="computer_card_queue" class="col col3">
+
+	</div>
+
+	<div style="clear:left;"></div>
+</div>
+
+	
+<script type="text/javascript">
+
+
+
+	
+	
+	var player_card_queue = {
+		id:"player_card_queue",
+		
+		append_card:function(card_html){
+			$('#'+this.id).append(card_html);
+		},
+		
+		remove:function(id){
+			$('#'+this.id+' #'+id).remove();
+		},
+		
+		clear:function(){
+			$('#'+this.id).html("");
+		}
+	}
+
+	var computer_card_queue = {
+		id:"computer_card_queue",
+		
+		append_card:function(card_html){
+			$('#'+this.id).append(card_html);
+		},
+		
+		remove:function(id){
+			$('#'+this.id+' #'+id).remove();
+		},
+		
+		clear:function(){
+			$('#'+this.id).html("");
+		}
+	}
+
+	var gameboard_spot = function(){
+		var gboard_spot = null;
+		var card = null;
+	}
+	var gameboard = {
+		items : [
+				[new gameboard_spot(), new gameboard_spot(), new gameboard_spot()],
+				[new gameboard_spot(), new gameboard_spot(), new gameboard_spot()],
+				[new gameboard_spot(), new gameboard_spot(), new gameboard_spot()]
+			],
+		
+		add_card:function(card_to_place, place_to_add_card){
+		
+			console.log(card_to_place);
+			console.log(place_to_add_card);
+		
+			var x_y_vals = place_to_add_card.attr('id').split('-');
+			console.log(x_y_vals);
+			
+			var x = parseInt(x_y_vals[0]);
+			var y = parseInt(x_y_vals[1]);
+			
+			// there is a null spot
+			if(this.items[x][y].card == null){
+			
+				// add the card to the gameboard
+				$(place_to_add_card.html(card.get_html(card_to_place)));
+				
+				// add the card to the cards in this object
+				this.items[x][y].card = card_to_place;
+			
+			
+				//this system is breaking if it attempts to capture more than 1 card i think
+			
+				// look to do some swapping
+				var other_card = null;
+				var current_x = 0;
+				var current_y = 0;
+				
+				// above
+				current_x = x-1;
+				current_y = y;
+				this.check_and_swap(x, y, current_x, current_y);
+				
+				// below
+				current_x = x+1;
+				current_y = y;
+				this.check_and_swap(x, y, current_x, current_y);
+				
+				// left
+				current_x = x;
+				current_y = y-1;
+				this.check_and_swap(x, y, current_x, current_y);
+				
+				// right
+				current_x = x;
+				current_y = y+1;
+				this.check_and_swap(x, y, current_x, current_y);
+			
+				// update the score
+				this.update_score();
+				
+				return true;
+			}
+			else{
+				return false;
+			}
+		},
+
+		get_open_spots:function(){
+			var open_areas = new Array();
+			for(var i in this.items){
+				for(var p in this.items[i]){
+					if(this.items[i][p].card == null){
+					
+						var new_point = new point(p,i);
+						open_areas.push(new_point);
+					}
+				}
+			}
+
+			return open_areas;			
+		},
+		
+		check_and_swap:function(x, y, current_x, current_y){
+		
+			console.log(current_x);
+			console.log(current_y);
+			if(
+				current_x > -1 
+				&& current_x < 3
+				&& current_y > -1
+				&& current_y < 3
+				&& this.items[current_x][current_y].card != null 
+				&& this.items[x][y].card.owner != this.items[current_x][current_y].card.owner){
+				
+					// up-down
+					if(current_x < x && this.items[x][y].card.values.up > this.items[current_x][current_y].card.values.down){
+						other_card = card.swap_ownership(this.items[current_x][current_y].card);
+						$("#"+(current_x+"-"+current_y)).html(card.get_html(other_card));
+					}
+					// down-up
+					else if(current_x > x && this.items[x][y].card.values.down > this.items[current_x][current_y].card.values.up){
+						other_card = card.swap_ownership(this.items[current_x][current_y].card);
+						$("#"+(current_x+"-"+current_y)).html(card.get_html(other_card));
+					}
+					// left-right
+					else if(current_y < y && this.items[x][y].card.values.left > this.items[current_x][current_y].card.values.right){
+						other_card = card.swap_ownership(this.items[current_x][current_y].card);
+						$("#"+(current_x+"-"+current_y)).html(card.get_html(other_card));
+					}
+					// right-left
+					else if(current_y > y && this.items[x][y].card.values.right > this.items[current_x][current_y].card.values.left){
+						other_card = card.swap_ownership(this.items[current_x][current_y].card);
+						$("#"+(current_x+"-"+current_y)).html(card.get_html(other_card));
+					}
+			}
+		},
+		
+		update_score:function(){
+			var player_score = 0;
+			var computer_score = 0;
+			for(var i = 0; i < 3; i++){
+				for(var j = 0; j < 3; j++){
+					if(this.items[i][j].card != null){
+						if(this.items[i][j].card.owner == "player"){
+							player_score++;
+						}
+						else if(this.items[i][j].card.owner == "computer"){
+							computer_score++;
+						}
+					}
+				}
+			}
+			
+			$('#player_score').html(player_score);
+			$('#computer_score').html(computer_score);
+			
+			if(player_score + computer_score == 9){
+				if(player_score > computer_score){	
+					winner_container.show("player");
+				}
+				else{
+					winner_container.show("computer");
+				}
+			}
+		}
+
+	}
+
+	
+	
+	/**
+	* Point object
+	*/
+	function point(incX, incY){
+		this.x = incX,
+		this.y = incY
+	}
+
+
+
+	var card = {
+		values: [],
+		
+		get_html:function(the_card_object){
+		
+			var html = "";
+			if(the_card_object.owner == "player"){
+				html = '<div id="'+the_card_object.id+'" class="card playerCard" style="background-image: url(\''+the_card_object.image+'\')">';
+			
+				html += "</div>";
+			}
+			else{ 
+				html = '<div id="'+the_card_object.id+'" class="card computerCard" style="background-image: url(\''+the_card_object.image+'\')">';
+			
+				html += "</div>";
+			}
+		
+			return html;
+		},
+		
+		swap_ownership:function(card){
+			if(card.owner == "player"){
+				card.owner = "computer";
+			}
+			else{
+				card.owner = "player";
+			}
+			
+			if(card.image.substring(0,1) == 'r'){
+				card.image = "b"+card.image.substring(1);
+			}
+			else{
+				card.image = "r"+card.image.substring(1);
+			}
+			
+			return card;
+		}
+	}
+	
+	
+	var player = {
+	
+		// id of the card selected by the player
+		selected_card: null,
+		cards: [],
+	
+	
+		init: function(){
+			this.bind_onclicks();
+		},
+	
+		bind_onclicks:function(){
+			$('.playerCard').click(function(){
+				player.handle_queue_onclick($(this));
+			});
+			
+			$('.gameboard_container').click(function(){
+				player.handle_gameboard_onclick($(this));
+			});
+		},
+		
+		handle_queue_onclick:function(card_clicked){
+			if(game.whos_turn == "player"){
+				this.card_queue_clicked(card_clicked);
+			}
+		},
+		
+		handle_gameboard_onclick: function(spot_clicked){
+			if(game.whos_turn == "player"){
+				this.gameboard_clicked(spot_clicked);
+			}
+		},
+		
+		card_queue_clicked:function(card_clicked){
+			this.selected_card = card_clicked.attr('id');
+		},
+		
+		gameboard_clicked:function(spot_clicked){
+			if(this.selected_card != null){
+				var selected_card_object = this.get_card_by_id(parseInt(this.selected_card));
+				var card_placed = gameboard.add_card(selected_card_object, spot_clicked);
+				
+				if(card_placed == true){
+					selected_card_object.is_placed = true;
+					player_card_queue.remove(this.selected_card);
+					this.selected_card = null;
+					game.swap_turns();
+				}
+			}
+		},
+		
+		remove_card_from_queue:function(){
+		
+		},
+		
+		get_card_by_id: function(id_to_get){
+			var card = null;
+			for(x in this.cards){
+				if(this.cards[x].id == id_to_get){
+					card = this.cards[x];
+					break;
+				}
+			}
+			return card;
+		}
+	}
+	
+	var computer = {
+
+		ai_type:"random",
+		is_deciding:false,
+		cards:[],
+		
+		
+		do_turn: function(){
+			if(this.ai_type == "random"){
+				this.random_ai();
+			}
+		},
+		
+		get_non_placed_cards:function(){
+			var non_placed = [];
+			for(x in this.cards){
+				if(this.cards[x].is_placed == false){
+					non_placed.push(this.cards[x]);
+				}
+			}
+			
+			return non_placed;
+		},
+
+		random_ai:function(){
+		
+			// prevent too many decisions
+			if(this.is_deciding == false){
+		
+				this.is_deciding = true;
+		
+				// get the cards that haven't been placed
+				var non_placed = this.get_non_placed_cards();
+			
+				// get a random card from the computer queue
+				var r_num = Math.floor(Math.random()*(non_placed.length-1));
+				var chosen_card = non_placed[r_num];
+				
+			
+				// get an open spot
+				var open_spots = gameboard.get_open_spots();
+				r_num = Math.floor(Math.random()*(open_spots.length-1));
+				
+				// point of the chosen spot
+				var chosen_spot = open_spots[r_num];
+				var object_of_spot = $('#'+chosen_spot.y+'-'+chosen_spot.x);
+				
+				var card_placed = gameboard.add_card(chosen_card, object_of_spot);
+				
+				if(card_placed == true){
+					computer_card_queue.remove(chosen_card.id);
+					chosen_card.is_placed = true;
+					game.swap_turns();
+				}
+				
+				
+				this.is_deciding = false;
+			}
+			
+		}
+		
+	
+	}
+	
+	var winner_container = {
+	
+		init:function(){
+			$('#retry_button').click(function(){
+				window.location.reload();
+			});
+		},
+	
+		show:function(who_won){
+			if(who_won == "player"){
+				$('#winner_container').attr('title',"Player Wins!");
+			}
+			else{
+				$('#winner_container').attr('title',"Computer Wins!");
+			}
+			
+			$('#winner_container').dialog({modal:true});
+		}
+	}
+
+	var player_chooser = {
+		
+		is_already_chosen:false,
+		player_chosen:"",
+		
+		init:function(){
+			$('#player_chooser_dialog').dialog({modal:true, autoOpen:false});
+			$('#start_game').click(function(event){
+				player_chooser.handle_start_game_button();
+			});
+			$('.even_odd_button').click(function(event){
+				player_chooser.handle_even_odd_button($(this));
+			});
+		},
+		choose_initial_turn:function(){
+			$('#player_chooser_dialog').dialog('open');
+		},
+		
+		handle_even_odd_button:function(button_clicked){
+			
+			if(this.is_already_chosen == true){
+				return;
+			}
+		
+			var r_num = this.roll_number();
+			var who_starts = "";
+			if(r_num % 2 == 0){
+				if(button_clicked.attr('id') == "player_even_button"){
+					this.player_chosen = "player";
+					who_starts = "Player starts";
+				}
+				else{
+					this.player_chosen = "computer";
+					who_starts = "Computer starts";
+				}
+			}
+			else{
+				if(button_clicked.attr('id') == "player_odd_button"){
+					this.player_chosen = "player";
+					who_starts = "Player starts";
+				}
+				else{
+					this.player_chosen = "computer";
+					who_starts = "Computer starts";
+				}
+			}
+			
+			
+			$('#player_chooser_number').prepend("<div>Number was: "+r_num+"</div><div>"+who_starts+'</div>');
+			
+			$('#start_game').attr('style', 'display:inline');
+			this.is_already_chosen = true;
+		},
+		handle_start_game_button:function(){
+			$('#player_chooser_dialog').dialog('close');
+			game.set_turn(this.player_chosen);
+		},
+		roll_number:function(){
+			var r_num = Math.floor((Math.random()*100)+1);
+			return r_num;
+		}
+	}
+	
+	
+	var game = {
+		
+		whos_turn: "none",
+		computer_check_in_time: 1000,
+		
+		init:function(){
+			this.setup_cards();
+			this.set_timer();
+		},
+		
+		setup_cards:function(){
+		
+			// draw the players cards, and set them into the player's card array
+			for(var x in initial_cards.p1){
+				player.cards[x] = initial_cards.p1[x];
+				player_card_queue.append_card(card.get_html(initial_cards.p1[x]));
+			}
+			
+			// draw the computers cards, and set them into the computer's card array
+			for(var x in initial_cards.p2){
+				computer.cards[x] = initial_cards.p2[x];
+				computer_card_queue.append_card(card.get_html(initial_cards.p2[x]));
+			}
+			
+		},
+		
+		set_timer:function(){
+			setInterval(this.handle_turn, this.computer_check_in_time);
+		},
+		
+		handle_turn:function(){
+			if(game.whos_turn == "computer"){
+				computer.do_turn();
+			}
+		},
+		
+		set_turn:function(inc_turn){
+			this.whos_turn = inc_turn;
+		},
+		
+		swap_turns:function(){
+			if(this.whos_turn == "player"){
+				this.whos_turn = "computer";
+			}
+			else{
+				this.whos_turn = "player";
+			}
+		}
+		
+		
+		
+	}
+	
+	
+	var initial_cards = {
+		p1: 
+			[
+				{id:1,values:{up:6,right:1,down:1,left:2},image:"rredbat.jpg",name:"Red Bat",owner:"player",is_placed:false},
+				{id:2,values:{up:1,right:4,down:1,left:5},image:"rgeezard.jpg",name:"Geezard",owner:"player",is_placed:false},
+				{id:3,values:{up:5,right:1,down:1,left:3},image:"rfunguar.jpg",name:"Funguar",owner:"player",is_placed:false},
+				{id:4,values:{up:1,right:3,down:3,left:5},image:"rbitebug.jpg",name:"Bite Bug",owner:"player",is_placed:false},
+				{id:5,values:{up:2,right:3,down:1,left:5},image:"rblobra.jpg",name:"Blobra",owner:"player",is_placed:false}
+			]
+		,
+		
+		p2: 
+			[
+				{id:6,values:{up:6,right:1,down:1,left:2},image:"bredbat.jpg",name:"Red Bat",owner:"computer",is_placed:false},
+				{id:7,values:{up:1,right:4,down:1,left:5},image:"bgeezard.jpg",name:"Geezard",owner:"computer",is_placed:false},
+				{id:8,values:{up:5,right:1,down:1,left:3},image:"bfunguar.jpg",name:"Funguar",owner:"computer",is_placed:false},
+				{id:9,values:{up:1,right:3,down:3,left:5},image:"bbitebug.jpg",name:"Bite Bug",owner:"computer",is_placed:false},
+				{id:10,values:{up:2,right:3,down:1,left:5},image:"bblobra.jpg",name:"Blobra",owner:"computer",is_placed:false}
+			]
+	}
+	
+	
+	
+	
+	
+	$(document).ready(function(){
+		winner_container.init();
+		player_chooser.init();
+		game.init();
+		player.init();
+		player_chooser.choose_initial_turn();
+	});
+	
+</script>
+
+
+
+
+</body>
+
+
+
+
+</html>
