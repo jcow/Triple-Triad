@@ -1,0 +1,84 @@
+/*Main Col CSS*/
+	
+	.main_container{
+		width: 720px;
+		margin-left: auto;
+		margin-right: auto;
+		margin-top: 20px;
+	}
+	
+	.col{
+		float: left;
+		border: 1px solid black;
+		min-height: 200px;
+	}
+
+	.col1, .col3{
+		height: 635px;
+		width: 100px;
+	}
+
+	.col2{
+		margin-top: 100px;
+		
+	}
+
+
+	/*Card CSS*/
+	.card{
+		 height: 127px;
+		 width: 100px;
+		 position:relative;
+	}
+	
+	.playerCard{
+		background-color: #D14D4D;
+	}
+	
+	.computerCard{
+		background-color: #4D75D1;
+	}
+	
+	
+	/*Gameboard css*/
+	.gameboard_container{
+		width: 100px;
+		background-color: #696969;
+		height: 127px;
+		float: left;
+	}
+	
+	
+	/*Dialog CSS*/
+	
+	#player_chooser_dialog{
+		text-align:center;
+	}
+	
+	.ui-dialog-titlebar-close {
+	  visibility: hidden;
+	}
+	
+	#player_chooser_number{
+		margin-top: 20px;
+	}
+	
+	#start_game{
+		margin-top: 10px;
+	}
+	
+	/*Score*/
+	.score{
+		width: 400px;
+		margin: 10 auto;
+		text-align: center;
+	}
+	
+	/*Winner Container*/
+	#winner_container{
+		text-align:center;
+	}
+	
+	#winner_container div{
+		margin-bottom: 20px;
+	}

@@ -8,106 +8,12 @@
 
 	<title>Triple Triad</title>
 
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js"></script>
-<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/themes/base/jquery-ui.css" type="text/css" media="all" />
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js"></script>
+	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/themes/base/jquery-ui.css" type="text/css" media="all" />
 
+	<link rel="stylesheet" href="style.css" type="text/css" media="all" />
 
-
-<style type="text/css">
-
-	/*Main Col CSS*/
-	
-	.main_container{
-		width: 720px;
-		margin-left: auto;
-		margin-right: auto;
-		margin-top: 20px;
-	}
-	
-	.col{
-		float: left;
-		border: 1px solid black;
-		min-height: 200px;
-	}
-
-	.col1, .col3{
-		height: 755px;
-		width: 140px;
-	}
-
-	.col2{
-		margin-top: 100px;
-		width: 420px;
-	}
-
-
-	/*Card CSS*/
-	.card{
-		 height: 127px;
-	}
-	
-	.playerCard{
-		background-color: #D14D4D;
-	}
-	
-	.computerCard{
-		background-color: #4D75D1;
-	}
-	
-	#player_card_queue .card, #computer_card_queue .card{
-		 margin: 20px;
-	}
-	
-	
-	/*Gameboard css*/
-	.gameboard_container{
-		width: 100px;
-		margin: 0 20px 20px 20px;
-		background-color: orange;
-		height: 127px;
-		float: left;
-	}
-	
-	.gameboard_container_top{
-		margin-top: 20px;
-	}	
-	
-	/*Dialog CSS*/
-	
-	#player_chooser_dialog{
-		text-align:center;
-	}
-	
-	.ui-dialog-titlebar-close {
-	  visibility: hidden;
-	}
-	
-	#player_chooser_number{
-		margin-top: 20px;
-	}
-	
-	#start_game{
-		margin-top: 10px;
-	}
-	
-	/*Score*/
-	.score{
-		width: 400px;
-		margin: 10 auto;
-		text-align: center;
-	}
-	
-	/*Winner Container*/
-	#winner_container{
-		text-align:center;
-	}
-	
-	#winner_container div{
-		margin-bottom: 20px;
-	}
-	
-</style>
 
 </head>
 
@@ -185,9 +91,6 @@
 	
 <script type="text/javascript">
 
-
-
-	
 	
 	var player_card_queue = {
 		id:"player_card_queue",
@@ -197,7 +100,7 @@
 		},
 		
 		remove:function(id){
-			$('#'+this.id+' #'+id).remove();
+			$('#'+this.id+' #'+id).css('background-image', 'none');
 		},
 		
 		clear:function(){
@@ -213,7 +116,7 @@
 		},
 		
 		remove:function(id){
-			$('#'+this.id+' #'+id).remove();
+			$('#'+this.id+' #'+id).css('background-image', 'none');
 		},
 		
 		clear:function(){
@@ -386,11 +289,18 @@
 	var card = {
 		values: [],
 		
-		get_html:function(the_card_object){
+		get_html:function(the_card_object, options){
 		
+			var position_offset_y = '';
+			if(options != undefined){
+				if(options.position_offset_y != undefined){
+					position_offset_y = 'top: '+options.position_offset_y+'px';
+				}
+			}
+			
 			var html = "";
 			if(the_card_object.owner == "player"){
-				html = '<div id="'+the_card_object.id+'" class="card playerCard" style="background-image: url(\''+the_card_object.image+'\')">';
+				html = '<div id="'+the_card_object.id+'" class="card playerCard" style="background-image: url(\''+the_card_object.image+'\');  '+position_offset_y+';">';
 			
 				html += "</div>";
 			}
@@ -402,6 +312,8 @@
 		
 			return html;
 		},
+		
+		
 		
 		swap_ownership:function(card){
 			if(card.owner == "player"){
@@ -649,11 +561,12 @@
 		},
 		
 		setup_cards:function(){
-		
+			
 			// draw the players cards, and set them into the player's card array
 			for(var x in initial_cards.p1){
 				player.cards[x] = initial_cards.p1[x];
-				player_card_queue.append_card(card.get_html(initial_cards.p1[x]));
+				var card_html = card.get_html(initial_cards.p1[x]);
+				player_card_queue.append_card(card_html);
 			}
 			
 			// draw the computers cards, and set them into the computer's card array
