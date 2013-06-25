@@ -1,7 +1,12 @@
+body{
+    color: #4F4F4F;
+}
+
+
 /*Main Col CSS*/
 	
 	.main_container{
-		width: 720px;
+		width: 506px;
 		margin-left: auto;
 		margin-right: auto;
 		margin-top: 20px;
@@ -69,9 +74,15 @@
 	
 	/*Score*/
 	.score{
-		width: 400px;
+		width: 506px;
 		margin: 10 auto;
 		text-align: center;
+		font-size: 36px;
+	}
+	
+	.player_score, .computer_score{
+		float:left;
+		width: 252px;
 	}
 	
 	/*Winner Container*/
@@ -82,3 +93,12 @@
 	#winner_container div{
 		margin-bottom: 20px;
 	}
+        
+        .wins_container{
+            float:right;
+            font-size: 20px;
+        }
+        .wins_container div{
+            float:right;
+            margin-left: 20px;
+        }
