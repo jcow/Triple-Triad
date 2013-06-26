@@ -112,10 +112,12 @@
 	
 <script type="text/javascript">
 
+	var triple_triad = {}
+
 	/**
 	* Object to control the player card queue
 	*/
-	var player_card_queue = {
+	triple_triad.player_card_queue = {
 		id:"player_card_queue",
 		
 		append_card:function(card_html){
@@ -134,7 +136,7 @@
 	/**
 	* Object to control and reference the computer card queue
 	*/
-	var computer_card_queue = {
+	triple_triad.computer_card_queue = {
 		id:"computer_card_queue",
 		
 		append_card:function(card_html){
@@ -153,26 +155,25 @@
 	/**
 	* Class for the game board spot
 	*/
-	var gameboard_spot = function(){
-		this.gboard_spot = null;
-		this.card = null;
+	triple_triad.gameboard_spot = function(){
+		return {
+			gboard_spot:null,
+			card:null
+		}
+		
 	}
 	
 	/**
 	* Game board object that controls the entire gameboard functions and state
 	*/
-	var gameboard = {
-		items : [
-				[new gameboard_spot(), new gameboard_spot(), new gameboard_spot()],
-				[new gameboard_spot(), new gameboard_spot(), new gameboard_spot()],
-				[new gameboard_spot(), new gameboard_spot(), new gameboard_spot()]
-			],
+	triple_triad.gameboard = {
+		items : [[null,null,null],[null,null,null],[null,null,null]],
                
 		// psuedo constructor
 		init:function(){
 			for(var i = 0; i < 3; i++){
 				for(var p = 0; p < 3; p++){
-					this.items[i][p] = new gameboard_spot();
+					this.items[i][p] = triple_triad.gameboard_spot();
 					$('#'+i+'-'+p).html('');
 				}
 			}
@@ -243,7 +244,7 @@
 				for(var p in this.items[i]){
 					if(this.items[i][p].card == null){
 					
-						var new_point = new point(p,i);
+						var new_point = new triple_triad.point(p,i);
 						open_areas.push(new_point);
 					}
 				}
@@ -308,10 +309,10 @@
 			
 			if(player_score + computer_score == 9){
 				if(player_score > computer_score){	
-					winner_container.show("player");
+					triple_triad.winner_container.show("player");
 				}
 				else{
-					winner_container.show("computer");
+					triple_triad.winner_container.show("computer");
 				}
 			}
 		}
@@ -323,92 +324,88 @@
 	/**
 	* Point object
 	*/
-	function point(incX, incY){
-		this.x = incX,
-		this.y = incY
+	triple_triad.point = function(incX, incY){
+		return {
+			x:incX,
+			y:incY
+		}
 	}
         
         
 	/**
 	 * Card object
 	 */
-	function card(id, values, image, name, owner, is_placed){
+	triple_triad.card = function(inc_id, values, image, inc_name, owner, is_placed){
 		
-		this.id = id;
-		this.values = values;
-		this.image = image;
-		this.name = name;
-		this.owner = owner;
-		this.is_placed = is_placed;
-		this.folder_location = 'images';
+		return {
+			id:inc_id,
+			values:values,
+			image:image,
+			name:inc_name,
+			owner:owner,
+			is_placed:is_placed,
+			folder_location:'images',
 		
-		// get the html representation of a card
-		this.get_html = function(options){
+			// get the html representation of a card
+			get_html:function(options){
 			
-			var position_offset_y = '';
-			if(options != undefined){
-					if(options.position_offset_y != undefined){
-							position_offset_y = 'top: '+options.position_offset_y+'px';
+				var position_offset_y = '';
+				if(options != undefined){
+						if(options.position_offset_y != undefined){
+								position_offset_y = 'top: '+options.position_offset_y+'px';
+						}
+				}
+
+				var html = "";
+				if(this.owner == "player"){
+						html = '<div id="'+this.id+'" class="card playerCard" style="background-image: url(\''+this.folder_location+'/'+this.image+'\');  '+position_offset_y+';">';
+						html += "</div>";
+				}
+				else{ 
+						html = '<div id="'+this.id+'" class="card computerCard" style="background-image: url(\''+this.folder_location+'/'+this.image+'\')">';
+						html += "</div>";
+				}
+
+				return html;
+			},
+		
+			// swaps the ownership of a card
+			swap_ownership:function(){
+					if(this.owner == "player"){
+							this.owner = "computer";
+							this.image = this.image.substring(1);
+					}
+					else{
+							this.owner = "player";
+							this.image = "r"+this.image.substring(0);
+					}
+
+					return this;
+			},
+		
+			// checks if the card is computer owned
+			is_computer_owned:function(){
+					if(this.owner == "computer"){
+							return true;
+					}
+					else{
+							return false;
+					}
+			},
+		
+			// checks if the card is player owned
+			is_player_owned:function(){
+					if(this.owner == "player"){
+							return true;
+					}
+					else{
+							return false;
 					}
 			}
-
-			var html = "";
-			if(this.owner == "player"){
-					html = '<div id="'+this.id+'" class="card playerCard" style="background-image: url(\''+this.folder_location+'/'+this.image+'\');  '+position_offset_y+';">';
-					html += "</div>";
-			}
-			else{ 
-					html = '<div id="'+this.id+'" class="card computerCard" style="background-image: url(\''+this.folder_location+'/'+this.image+'\')">';
-					html += "</div>";
-			}
-
-			return html;
-		},
-		
-		// swaps the ownership of a card
-		this.swap_ownership = function(){
-				if(this.owner == "player"){
-						this.owner = "computer";
-						this.image = this.image.substring(1);
-				}
-				else{
-						this.owner = "player";
-						this.image = "r"+this.image.substring(0);
-				}
-
-				if(this.image.substring(0,1) == 'r'){
-						
-				}
-				else{
-						
-				}
-
-				return this;
-		},
-		
-		// checks if the card is computer owned
-		this.is_computer_owned = function(){
-				if(this.owner == "computer"){
-						return true;
-				}
-				else{
-						return false;
-				}
-		},
-		
-		// checks if the card is player owned
-		this.is_player_owned = function(){
-				if(this.owner == "player"){
-						return true;
-				}
-				else{
-						return false;
-				}
 		}
-
 	}
 	
-	var player = {
+	triple_triad.player = {
 	
 		// id of the card selected by the player
 		selected_card: null,
@@ -422,24 +419,24 @@
 		// binds the clicks of the gameboard container and the player cards
 		bind_onclicks:function(){
 			$('.playerCard').click(function(){
-				player.handle_queue_onclick($(this));
+				triple_triad.player.handle_queue_onclick($(this));
 			});
 			
 			$('.gameboard_container').click(function(){
-				player.handle_gameboard_onclick($(this));
+				triple_triad.player.handle_gameboard_onclick($(this));
 			});
 		},
 		
 		// handles the game queue's onclick function
 		handle_queue_onclick:function(card_clicked){
-			if(game.whos_turn == "player"){
+			if(triple_triad.game.whos_turn == "player"){
 				this.card_queue_clicked(card_clicked);
 			}
 		},
 		
 		// handles the gameboard onclick function
 		handle_gameboard_onclick: function(spot_clicked){
-			if(game.whos_turn == "player"){
+			if(triple_triad.game.whos_turn == "player"){
 				this.gameboard_clicked(spot_clicked);
 			}
 		},
@@ -453,13 +450,13 @@
 		gameboard_clicked:function(spot_clicked){
 			if(this.selected_card != null){
 				var selected_card_object = this.get_card_by_id(parseInt(this.selected_card));
-				var card_placed = gameboard.add_card(selected_card_object, spot_clicked);
+				var card_placed = triple_triad.gameboard.add_card(selected_card_object, spot_clicked);
 				
 				if(card_placed == true){
 					selected_card_object.is_placed = true;
-					player_card_queue.remove(this.selected_card);
+					triple_triad.player_card_queue.remove(this.selected_card);
 					
-					game.swap_turns();
+					triple_triad.game.swap_turns();
                                         
 					// remove the card from the player's hands
 					this.remove_card_by_id(parseInt(this.selected_card));
@@ -498,7 +495,7 @@
 	/**
 	* Computer object to control the computer and its actions
 	*/
-	var computer = {
+	triple_triad.computer = {
 
         counter:0,
 		ai_type:"alpha_beta",
@@ -540,14 +537,14 @@
                             
 						this.is_deciding = true;
 
-						var placing_obj = alpha_beta.get(gameboard.items, player.cards, computer.cards);
+						var placing_obj = alpha_beta.get(triple_triad.gameboard.items, triple_triad.player.cards, triple_triad.computer.cards);
 						var object_of_spot = $('#'+placing_obj.x+'-'+placing_obj.y);
-						var card_placed = gameboard.add_card(placing_obj.card, object_of_spot);
+						var card_placed = triple_triad.gameboard.add_card(placing_obj.card, object_of_spot);
 
 						if(card_placed == true){
-								computer_card_queue.remove(placing_obj.card.id);
+								triple_triad.computer_card_queue.remove(placing_obj.card.id);
 								placing_obj.card.is_placed = true;
-								game.swap_turns();
+								triple_triad.game.swap_turns();
 								this.remove_card_by_id(placing_obj.card.id);
 						}
 						
@@ -558,7 +555,7 @@
 				}
 		},
 
-		// random ai function used at the beginning
+		// random ai function used at the beginning of the project
 		random_ai:function(){
 		
 			// prevent too many decisions
@@ -574,19 +571,19 @@
 				var chosen_card = non_placed[r_num];
 				
 				// get an open spot
-				var open_spots = gameboard.get_open_spots();
+				var open_spots = triple_triad.gameboard.get_open_spots();
 				r_num = Math.floor(Math.random()*(open_spots.length-1));
 				
 				// point of the chosen spot
 				var chosen_spot = open_spots[r_num];
 				var object_of_spot = $('#'+chosen_spot.y+'-'+chosen_spot.x);
 				
-				var card_placed = gameboard.add_card(chosen_card, object_of_spot);
+				var card_placed = triple_triad.gameboard.add_card(chosen_card, object_of_spot);
 				
 				if(card_placed == true){
-					computer_card_queue.remove(chosen_card.id);
+					triple_triad.computer_card_queue.remove(chosen_card.id);
 					chosen_card.is_placed = true;
-					game.swap_turns();
+					triple_triad.game.swap_turns();
 				}
 				
 				
@@ -610,13 +607,13 @@
 	/**
 	*  Winner container AI
 	*/
-	var winner_container = {
+	triple_triad.winner_container = {
 	
 		// pseudo constructor
 		init:function(){
 			$('#retry_button').click(function(){
 				//window.location.reload();
-				reset();
+				triple_triad.reset();
 				$('#winner_container').dialog('close');
 			});
 		},
@@ -624,14 +621,14 @@
 		// shows the container of who won the game
 		show:function(who_won){
                         console.log(who_won);
-                        game.reset();
+                        triple_triad.game.reset();
                     
 			if(who_won == "player"){
-                                game.player_wins++;
+                                triple_triad.game.player_wins++;
 				$('#winner_container').dialog({title:"Player Wins!"});
 			}
 			else{
-                                game.computer_wins++;
+                                triple_triad.game.computer_wins++;
 				$('#winner_container').dialog({title:"Computer Wins!"});
 			}
 			
@@ -642,7 +639,7 @@
 	/**
 	*  Player chooser object that chooses who starts the game
 	*/
-	var player_chooser = {
+	triple_triad.player_chooser = {
 		
 		is_already_chosen:false,
 		player_chosen:"",
@@ -659,10 +656,10 @@
                     
 			$('#player_chooser_dialog').dialog({modal:true, autoOpen:false});
 			$('#start_game').click(function(event){
-				player_chooser.handle_start_game_button();
+				triple_triad.player_chooser.handle_start_game_button();
 			});
 			$('.even_odd_button').click(function(event){
-				player_chooser.handle_even_odd_button($(this));
+				triple_triad.player_chooser.handle_even_odd_button($(this));
 			});
 		},
 		
@@ -712,7 +709,7 @@
 		handle_start_game_button:function(){
 			$('#player_chooser_dialog').dialog('close');
                         
-			game.set_turn(this.player_chosen);
+			triple_triad.game.set_turn(this.player_chosen);
 		},
 		
 		// rolls a number between 1 and 100
@@ -725,7 +722,7 @@
 	/**
 	* Game object that controls everything
 	*/
-	var game = {
+	triple_triad.game = {
 		
 		whos_turn: "none",
 		computer_check_in_time: 1000,
@@ -761,7 +758,7 @@
                         
 			// draw the players cards, and set them into the player's card array
 			for(var x in player_cards){
-				player.cards[x] = new card(
+				triple_triad.player.cards[x] = triple_triad.card(
                                     player_cards[x].id,
                                     player_cards[x].values,
                                     player_cards[x].image,
@@ -771,13 +768,13 @@
                                 );
                                     
                                     
-				var card_html = player.cards[x].get_html();
-				player_card_queue.append_card(card_html);
+				var card_html = triple_triad.player.cards[x].get_html();
+				triple_triad.player_card_queue.append_card(card_html);
 			}
 			
 			// draw the computers cards, and set them into the computer's card array
 			for(var x in computer_cards){
-				computer.cards[x] = new card(
+				triple_triad.computer.cards[x] = triple_triad.card(
                                     computer_cards[x].id,
                                     computer_cards[x].values,
                                     computer_cards[x].image,
@@ -786,8 +783,8 @@
                                     computer_cards[x].is_placed
                                 );
                                   
-                                var card_html = computer.cards[x].get_html();
-				computer_card_queue.append_card(card_html);
+                                var card_html = triple_triad.computer.cards[x].get_html();
+				triple_triad.computer_card_queue.append_card(card_html);
 			}
 			
 		},
@@ -802,8 +799,8 @@
 
 		// handles the turn for the computer
 		handle_turn:function(){
-			if(game.whos_turn == "computer"){
-				computer.do_turn();
+			if(triple_triad.game.whos_turn == "computer"){
+				triple_triad.computer.do_turn();
 			}
 		},
 		
@@ -832,7 +829,7 @@
 	/**
 	* Initial card object
 	*/
-	var initial_cards = {
+	triple_triad.initial_cards = {
 		p1: [],
 		p2: []
 	}
@@ -918,7 +915,6 @@
 			{values:{up:5,right:1,down:1,left:3},image:"funguar.jpg"},
 			{values:{up:1,right:3,down:3,left:5},image:"bitebug.jpg"},
 			{values:{up:2,right:3,down:1,left:5},image:"blobra.jpg"},
-			
 			{values:{up:6,right:8,down:4,left:5},image:"abadon.jpg"},
 			{values:{up:7,right:2,down:3,left:5},image:"abyssworm.jpg"},
 			{values:{up:4,right:5,down:5,left:6},image:"adamantoise.jpg"},
@@ -1002,29 +998,29 @@
 	/**
 	* Sets up everything initially and after a game is finished
 	*/
-	function reset(){
+	triple_triad.reset = function(){
             
-		player_card_queue.clear();
-		computer_card_queue.clear();
+		triple_triad.player_card_queue.clear();
+		triple_triad.computer_card_queue.clear();
                 
 		card_chooser.init();
 		
-		winner_container.init();
-		player_chooser.init();
-		gameboard.init();
-		game.init();
-		player.init();
+		triple_triad.winner_container.init();
+		triple_triad.player_chooser.init();
+		triple_triad.gameboard.init();
+		triple_triad.game.init();
+		triple_triad.player.init();
                 
 		alpha_beta.init(config.alpha_beta_depth);
 		
-		player_chooser.choose_initial_turn();
+		triple_triad.player_chooser.choose_initial_turn();
 	}
 	
 	/**
 	* First function that fires to get the ball rolling
 	*/
 	$(document).ready(function(){
-		reset();
+		triple_triad.reset();
 	});
 	
 </script>
