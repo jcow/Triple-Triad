@@ -1,0 +1,133 @@
+body{
+    color: #4F4F4F;
+    background-color:#eee;
+}
+
+.stat_labels{
+	float:left; 
+	width: 200px; 
+	text-align:right; 
+	border-right:1px solid #999; 
+	padding: 3px 10px;
+}
+
+.stat_values{
+	float:left; 
+	width: 100px; 
+	padding: 3px 10px;
+}
+
+.stats_n_configs{
+	border: 1px solid #666;
+	border-radius: 5px;
+	padding:10px;
+	position: absolute;
+	width: 400px;
+	left: 10px;
+	right: 10px;
+	background-color:#fff;
+}
+
+.stats_n_configs h2{
+	margin:0;
+	margin-bottom: 5px;
+	padding:0;
+}
+
+/*Main Columns CSS*/
+.main_container{
+	width: 636px;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 20px;
+}
+
+#player_map, #player_card_queue, #computer_card_queue{
+	float: left;
+	border: 1px solid #666;
+	border-radius: 5px;
+}
+
+#player_card_queue, #computer_card_queue{
+	background-image:url('../images/grid.png');
+	padding:15px;
+	height: 635px;
+	width: 100px;
+}
+
+#player_card_queue{
+}
+
+#computer_card_queue{
+}
+
+#player_map{
+	background-image:url('../images/grid.png');
+	margin-top: 142px;
+	margin-right:15px;
+	margin-left:15px;
+	padding:10px;
+}
+
+/*Card CSS*/
+.card{
+	 height: 127px;
+	 width: 100px;
+	 position:relative;
+}
+
+
+/*Dialog CSS*/
+#player_chooser_dialog{
+	text-align:center;
+}
+
+.ui-dialog-titlebar-close {
+  visibility: hidden;
+}
+
+#player_chooser_number{
+	margin-top: 20px;
+}
+
+#start_game{
+	margin-top: 10px;
+}
+
+/*Score*/
+.score{
+	margin: 10 auto;
+	text-align: center;
+	font-size: 36px;
+}
+
+.player_score, .computer_score{
+	float:left;
+	width: 318px;
+}
+
+/*Winner Container*/
+#winner_container{
+	text-align:center;
+}
+
+#winner_container div{
+	margin-bottom: 20px;
+}
+
+
+.gameboard_container{
+	background-image:url('../images/dark_wall.png');
+	width: 100px;
+	height: 127px;
+	float: left;
+}
+
+/* Rows and Cols */
+.r-zero_c-zero, .r-zero_c-one, .r-zero_c-two, .r-one_c-zero, .r-one_c-one, .r-one_c-two{
+	margin-bottom:10px;
+}
+
+.r-zero_c-zero, .r-zero_c-one, .r-one_c-zero, .r-one_c-one, .r-two_c-zero, .r-two_c-one{
+	margin-right:10px;
+}

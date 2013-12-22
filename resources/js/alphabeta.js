@@ -123,7 +123,7 @@ var alpha_beta = {
                     var max_value = this.ab(initial_state, this.max_depth, -1000000, 1000000, "max");
                     
                     console.log('Running Count: '+this.counter);
-					$('#state_counter').html('States Explored By Computer: '+this.counter);
+					$('#state_counter').html(this.counter);
                     
 					// return the values in regards to the next move the computer should make
                     return {
@@ -234,7 +234,7 @@ var alpha_beta = {
         },
         
         
-    // gets the chile states
+    // gets the child states
 	child_states:function(current_state, player){
 	
 		var new_state;
