@@ -1,6 +1,6 @@
 #Triple Triad
 
-This game was constructed from my artificial intelligence class during fall 2012.  The purpose of this project
+This game was constructed for my artificial intelligence class during fall 2012.  The purpose of this project
 was to implement an algorithm suited for AI in which I chose the alpha-beta pruning algorithm.
 
 
@@ -10,7 +10,7 @@ Download the files and open triple_triad.html
 
 I have tested this in Firefox 13.0.1 and Chrome 23.0.1271 and it works 
 best in Chrome - especially when you are searching at the maximum depth
-of 9.  It workds in IE but the UI is a little wacky.
+of 9.  It works in IE but the UI is a little wacky.
 
 
 ##Config.js
